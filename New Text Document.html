@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscribe to Unlock the Texture Pack</title>
+  <style>
+    /* General Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Body & Background */
+    body {
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      overflow: hidden;
+      background-image: url('https://wallpapers.com/images/hd/beautiful-minecraft-cherry-blossoms-8zlaxmeiqm93j24f.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-color: rgba(0, 0, 0, 0.6);
+    }
+
+    /* Main Content Container */
+    .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Header Text */
+    h1 {
+      font-size: 36px;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    /* Instructions Text */
+    p {
+      font-size: 18px;
+      max-width: 400px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    /* Timer Display */
+    #timer {
+      font-size: 20px;
+      color: yellow;
+      margin-bottom: 20px;
+    }
+
+    /* Subscribe Button */
+    .subscribe-btn {
+      font-size: 18px;
+      color: white;
+      background-color: transparent;
+      border: 2px solid white;
+      border-radius: 5px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    /* Attack Animation (Shaking) */
+    .subscribe-btn:hover {
+      animation: shake 0.3s ease forwards;
+    }
+
+    @keyframes shake {
+      0% {
+        transform: translateX(0);
+      }
+      25% {
+        transform: translateX(-5px);
+      }
+      50% {
+        transform: translateX(5px);
+      }
+      75% {
+        transform: translateX(-3px);
+      }
+      100% {
+        transform: translateX(3px);
+      }
+    }
+
+    /* Texture Pack Link */
+    #texturePackLink {
+      display: none;
+      font-size: 18px;
+      margin: 20px 0;
+      color: #FFD700;
+      text-decoration: none;
+      padding: 10px;
+      border: 2px solid white;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    #texturePackLink:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Snow Animation Canvas */
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: -1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header Text -->
+    <h1>Subscribe to my YouTube Channel to Unlock the Texture Pack</h1>
+    <p>Click the button below to subscribe and access the texture pack after 15 seconds.</p>
+
+    <!-- Timer Section -->
+    <div id="timer">Timer: 15 seconds remaining...</div>
+
+    <!-- Subscribe Button -->
+    <button class="subscribe-btn" onclick="redirectToSubscription()">Subscribe to Unlock</button>
+
+    <!-- Hidden Texture Pack Link -->
+    <a id="texturePackLink" href="https://drive.google.com/file/d/1FAhE1deOvG8ZHVwvgLiq_O-I9Pagc2aV/view?usp=sharing" target="_blank">Access the Texture Pack</a>
+  </div>
+
+  <!-- Snow Animation Canvas -->
+  <canvas id="snowCanvas"></canvas>
+
+  <script>
+    // Timer Logic
+    let timer = 15;
+    const timerElement = document.getElementById('timer');
+
+    function countdownTimer() {
+      timerElement.innerText = `Timer: ${timer} seconds remaining...`;
+      if (timer <= 0) {
+        clearInterval(timerInterval);
+        timerElement.innerText = "Timer ready. Click the button to access the texture pack!";
+      } else {
+        timer -= 1;
+      }
+    }
+
+    const timerInterval = setInterval(countdownTimer, 1000);
+
+    // Redirect User to YouTube Subscription Link
+    function redirectToSubscription() {
+      window.open('https://www.youtube.com/channel/UCwuf09Fcct-IoFs2VTj6glQ', '_blank');
+      alert("Please subscribe to the channel. Wait for the timer or return here.");
+      unlockTexturePack();
+    }
+
+    // Enable access to the texture pack link
+    function unlockTexturePack() {
+      const link = document.getElementById('texturePackLink');
+      link.style.display = 'block';
+      alert("You can now download the texture pack.");
+    }
+
+    // Snow Animation Logic
+    const canvas = document.getElementById('snowCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function createSnow() {
+      const particleCount = 100;
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 3 + 1,
+          speedY: Math.random() * 2 + 1,
+        });
+      }
+    }
+
+    function renderSnow() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = 'white';
+      particles.forEach((particle) => {
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        particle.y += particle.speedY;
+
+        if (particle.y > canvas.height) {
+          particle.y = 0;
+          particle.x = Math.random() * canvas.width;
+        }
+      });
+
+      requestAnimationFrame(renderSnow);
+    }
+
+    createSnow();
+    renderSnow();
+  </script>
+</body>
+</html>
